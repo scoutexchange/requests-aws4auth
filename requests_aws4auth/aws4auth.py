@@ -228,7 +228,7 @@ class AWS4Auth(AuthBase):
         """
         l = len(args)
         if l not in [2, 4, 5]:
-            msg = 'AWS4Auth() takes 2, 4 or 5 arguments, {} given'.format(l)
+            msg = 'AWS4Auth() takes 2, 4 or 5 arguments, {0} given'.format(l)
             raise TypeError(msg)
         self.access_id = args[0]
         if isinstance(args[1], AWS4SigningKey) and l == 2:
@@ -357,10 +357,10 @@ class AWS4Auth(AuthBase):
         hsh = hmac.new(self.signing_key.key, sig_string, hashlib.sha256)
         sig = hsh.hexdigest()
         auth_str = 'AWS4-HMAC-SHA256 '
-        auth_str += 'Credential={}/{}, '.format(self.access_id,
+        auth_str += 'Credential={0}/{1}, '.format(self.access_id,
                                                 self.signing_key.scope)
-        auth_str += 'SignedHeaders={}, '.format(signed_headers)
-        auth_str += 'Signature={}'.format(sig)
+        auth_str += 'SignedHeaders={0}, '.format(signed_headers)
+        auth_str += 'Signature={0}'.format(sig)
         req.headers['Authorization'] = auth_str
         return req
 
@@ -414,27 +414,27 @@ class AWS4Auth(AuthBase):
         formats = {
             # RFC 7231, e.g. 'Mon, 09 Sep 2011 23:36:00 GMT'
             r'^(?:\w{3}, )?(\d{2}) (\w{3}) (\d{4})\D.*$':
-                lambda m: '{}-{:02d}-{}'.format(
+                lambda m: '{0}-{1:02d}-{2}'.format(
                                           m.group(3),
                                           months.index(m.group(2).lower())+1,
                                           m.group(1)),
             # RFC 850 (e.g. Sunday, 06-Nov-94 08:49:37 GMT)
             # assumes current century
             r'^\w+day, (\d{2})-(\w{3})-(\d{2})\D.*$':
-                lambda m: '{}{}-{:02d}-{}'.format(
+                lambda m: '{0}{1}-{2:02d}-{3}'.format(
                                             str(datetime.date.today().year)[:2],
                                             m.group(3),
                                             months.index(m.group(2).lower())+1,
                                             m.group(1)),
             # C time, e.g. 'Wed Dec 4 00:00:00 2002'
             r'^\w{3} (\w{3}) (\d{1,2}) \d{2}:\d{2}:\d{2} (\d{4})$':
-                lambda m: '{}-{:02d}-{:02d}'.format(
+                lambda m: '{0}-{1:02d}-{2:02d}'.format(
                                               m.group(3),
                                               months.index(m.group(1).lower())+1,
                                               int(m.group(2))),
             # x-amz-date format dates, e.g. 20100325T010101Z
             r'^(\d{4})(\d{2})(\d{2})T\d{6}Z$':
-                lambda m: '{}-{}-{}'.format(*m.groups()),
+                lambda m: '{0}-{1}-{2}'.format(*m.groups()),
             # ISO 8601 / RFC 3339, e.g. '2009-03-25T10:11:12.13-01:00'
             r'^(\d{4}-\d{2}-\d{2})(?:[Tt].*)?$':
                 lambda m: m.group(1),
@@ -567,7 +567,7 @@ class AWS4Auth(AuthBase):
         for hdr in sorted(cano_headers_dict):
             vals = cano_headers_dict[hdr]
             val = ','.join(sorted(vals))
-            cano_headers += '{}:{}\n'.format(hdr, val)
+            cano_headers += '{0}:{1}\n'.format(hdr, val)
             signed_headers_list.append(hdr)
         signed_headers = ';'.join(signed_headers_list)
         return (cano_headers, signed_headers)
@@ -671,6 +671,7 @@ class AWS4Auth(AuthBase):
         Ignore text enclosed in quotes.
 
         """
+        text = text.encode('utf-8')
         return ' '.join(shlex.split(text, posix=False))
 
 

@@ -87,7 +87,7 @@ class AWS4SigningKey:
         self.region = region
         self.service = service
         self.date = date or datetime.utcnow().strftime('%Y%m%d')
-        self.scope = '{}/{}/{}/aws4_request'.format(
+        self.scope = '{0}/{1}/{2}/aws4_request'.format(
                                             self.date,
                                             self.region,
                                             self.service)

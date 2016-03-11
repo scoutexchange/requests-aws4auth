@@ -182,7 +182,10 @@ def request_from_text(text):
         hdr = hdr.lower()
         vals = headers.setdefault(hdr, [])
         vals.append(val)
-    headers = {hdr: ','.join(sorted(vals)) for hdr, vals in headers.items()}
+
+    for hdr, vals in headers.items():
+        headers[hdr] = ','.join(sorted(vals))
+
     check_url = urlparse(path)
     if check_url.scheme and check_url.netloc:
         # absolute URL in path
@@ -305,7 +308,7 @@ class AWS4_SigningKey_Test(unittest.TestCase):
                                              service, date, intermediates=True)
         for i, hsh in enumerate(result):
             hsh = [ord(x) for x in hsh] if PY2 else list(hsh)
-            self.assertEqual(hsh, expected[i], msg='Item number {}'.format(i))
+            self.assertEqual(hsh, expected[i], msg='Item number {0}'.format(i))
 
     def test_generate_key(self):
         """
@@ -366,7 +369,7 @@ class AWS4Auth_Instantiate_Test(unittest.TestCase):
         if test_date != auth.signing_key.date:
             test_date = datetime.datetime.utcnow().strftime('%Y%m%d')
         self.assertEqual(auth.signing_key.date, test_date)
-        expected = '{}/region/service/aws4_request'.format(test_date)
+        expected = '{0}/region/service/aws4_request'.format(test_date)
         self.assertEqual(auth.signing_key.scope, expected)
 
     def test_instantiate_from_signing_key(self):
@@ -398,7 +401,7 @@ class AWS4Auth_Instantiate_Test(unittest.TestCase):
                         'secret_key',
                         'region',
                         'service')
-        check_set = {'host', 'content-type', 'date', 'x-amz-*'}
+        check_set = set(['host', 'content-type', 'date', 'x-amz-*'])
         self.assertSetEqual(set(auth.include_hdrs), check_set)
 
 
